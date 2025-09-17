@@ -46,8 +46,8 @@
     "timeframe": "1m",
     "exchange": {
         "name": "okx",
-        "key": "8494f84e-5aab-46ad-8970-3e85cf08d8d0",
-        "secret": "46F45B43E880B675134AA936C0301968",
+        "key": "************************************",
+        "secret": "********************************",
         "ccxt_config": {},
         "ccxt_async_config": {},
         "pair_whitelist": [
