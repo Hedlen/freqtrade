@@ -198,6 +198,84 @@ in the bug reports.
 
 Feel like the bot is missing a feature? We welcome your pull requests!
 
+## Repository Structure
+
+### Core Architecture
+```
+freqtrade/
+├── commands/          # CLI命令实现（交易、回测、数据管理等）
+├── configuration/     # 配置管理和验证
+├── exchange/          # 20+交易所接口实现
+├── strategy/          # 交易策略框架和接口
+├── freqai/           # AI/机器学习集成（FreqAI）
+├── persistence/       # 数据持久化和数据库模型
+├── rpc/              # 远程调用（Telegram、REST API、Webhook）
+├── optimize/         # 回测和超参数优化
+├── data/             # 历史数据管理和分析
+├── plot/             # 图表绘制功能
+├── plugins/          # 插件系统（交易对列表、保护机制）
+├── resolvers/        # 动态加载器（策略、交易所、模型等）
+└── worker.py         # 主工作进程
+```
+
+### Documentation & Testing
+```
+docs/                  # 完整文档（安装、配置、策略开发等）
+tests/                 # 全面测试套件（单元测试、集成测试）
+config_examples/       # 配置示例和模板
+```
+
+### User & Development
+```
+user_data/             # 用户数据（策略、模型、笔记本）
+scripts/               # 辅助脚本和工具
+docker/                # Docker容器化配置
+ft_client/             # 独立客户端工具
+```
+
+### Key Features by Module
+
+**Trading Engine** (`freqtradebot.py`)
+- 协调所有交易活动
+- 管理交易生命周期
+- 风险控制和安全检查
+
+**Strategy System** (`strategy/`)
+- 支持自定义技术指标
+- 策略回测和验证
+- 参数优化接口
+
+**Exchange Integration** (`exchange/`)
+- 统一API抽象层
+- 支持现货和期货交易
+- WebSocket实时数据流
+
+**AI/ML Framework** (`freqai/`)
+- 自适应预测模型
+- 强化学习支持
+- 特征工程工具
+
+**Data Management** (`data/`)
+- 多格式数据支持
+- 历史数据下载
+- 数据质量验证
+
+**Configuration System** (`configuration/`)
+- JSON配置文件
+- 环境变量支持
+- 运行时配置验证
+
+For detailed module documentation, please refer to the [developer documentation](https://www.freqtrade.io/en/stable/developer/).
+
+## Quick Links
+
+- [📖 Documentation](https://www.freqtrade.io)
+- [💬 Discord Community](https://discord.gg/p7nuUNVfP7)
+- [🐛 Issue Tracker](https://github.com/freqtrade/freqtrade/issues)
+- [🚀 Feature Requests](https://github.com/freqtrade/freqtrade/labels/enhancement)
+- [📊 Code Coverage](https://coveralls.io/github/freqtrade/freqtrade?branch=develop)
+- [📈 CI/CD Status](https://github.com/freqtrade/freqtrade/actions/workflows/ci.yml)
+
 Please read the
 [Contributing document](https://github.com/freqtrade/freqtrade/blob/develop/CONTRIBUTING.md)
 to understand the requirements before sending your pull-requests.
