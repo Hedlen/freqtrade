@@ -1,5 +1,5 @@
 """
-Freqtrade is the main module of this bot. It contains the class Freqtrade()
+Freqtrade is the main module of this bot. It contains the FreqtradeBot class.
 """
 
 import logging
@@ -1617,7 +1617,9 @@ class FreqtradeBot(LoggingMixin):
                         f"Emergency exiting trade {trade}, as the exit order "
                         f"timed out {max_timeouts} times. force selling {order['amount']}."
                     )
-                    self.emergency_exit(trade, order["price"], order["amount"])
+                    # Trade.session.refresh(order_obj)
+
+                    self.emergency_exit(trade, order["price"], order_obj.safe_remaining)
             return canceled
 
     def emergency_exit(

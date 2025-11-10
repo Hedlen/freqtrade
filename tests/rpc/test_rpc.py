@@ -393,7 +393,7 @@ def test_rpc_delete_trade(mocker, default_conf, fee, markets, caplog, is_short):
     freqtradebot.strategy.order_types["stoploss_on_exchange"] = True
     create_mock_trades(fee, is_short)
     rpc = RPC(freqtradebot)
-    with pytest.raises(RPCException, match="Trade with id '200' not found."):
+    with pytest.raises(RPCException, match=r"Trade with id '200' not found\."):
         rpc._rpc_delete("200")
 
     trades = Trade.session.scalars(select(Trade)).all()
@@ -848,11 +848,11 @@ def test_rpc_force_exit(default_conf, ticker, fee, mocker) -> None:
 
     freqtradebot.state = State.STOPPED
     with pytest.raises(RPCException, match=r".*trader is not running*"):
-        rpc._rpc_force_exit(None)
+        rpc._rpc_force_exit("22222")
 
     freqtradebot.state = State.RUNNING
     with pytest.raises(RPCException, match=r".*invalid argument*"):
-        rpc._rpc_force_exit(None)
+        rpc._rpc_force_exit("22222")
 
     msg = rpc._rpc_force_exit("all")
     assert msg == {"result": "Created exit orders for all open trades."}
@@ -867,7 +867,7 @@ def test_rpc_force_exit(default_conf, ticker, fee, mocker) -> None:
 
     freqtradebot.state = State.STOPPED
     with pytest.raises(RPCException, match=r".*trader is not running*"):
-        rpc._rpc_force_exit(None)
+        rpc._rpc_force_exit("22222")
 
     with pytest.raises(RPCException, match=r".*trader is not running*"):
         rpc._rpc_force_exit("all")
@@ -1204,7 +1204,7 @@ def test_rpc_force_entry(mocker, default_conf, ticker, fee, limit_buy_order_open
     patch_get_signal(freqtradebot)
     rpc = RPC(freqtradebot)
     pair = "ETH/BTC"
-    with pytest.raises(RPCException, match="Maximum number of trades is reached."):
+    with pytest.raises(RPCException, match=r"Maximum number of trades is reached\."):
         rpc._rpc_force_entry(pair, None)
     freqtradebot.config["max_open_trades"] = 5
 
@@ -1286,7 +1286,7 @@ def test_rpc_force_entry_wrong_mode(mocker, default_conf) -> None:
     patch_get_signal(freqtradebot)
     rpc = RPC(freqtradebot)
     pair = "ETH/BTC"
-    with pytest.raises(RPCException, match="Can't go short on Spot markets."):
+    with pytest.raises(RPCException, match=r"Can't go short on Spot markets\."):
         rpc._rpc_force_entry(pair, None, order_side=SignalDirection.SHORT)
 
 

@@ -12,7 +12,7 @@ from typing import Any
 from freqtrade import constants
 from freqtrade.configuration.deprecated_settings import process_temporary_deprecated_settings
 from freqtrade.configuration.directory_operations import create_datadir, create_userdata_dir
-from freqtrade.configuration.environment_vars import enironment_vars_to_dict
+from freqtrade.configuration.environment_vars import environment_vars_to_dict
 from freqtrade.configuration.load_config import load_file, load_from_files
 from freqtrade.constants import Config
 from freqtrade.enums import (
@@ -80,7 +80,7 @@ class Configuration:
         from freqtrade.commands.arguments import NO_CONF_ALLOWED
 
         if self.args.get("command") not in NO_CONF_ALLOWED:
-            env_data = enironment_vars_to_dict()
+            env_data = environment_vars_to_dict()
             config = deep_merge_dicts(env_data, config)
 
         # Normalize config
@@ -233,6 +233,9 @@ class Configuration:
             config["exportdirectory"] = config["user_data_dir"] / "backtest_results"
         if not config.get("exportfilename"):
             config["exportfilename"] = None
+        if config.get("exportfilename"):
+            # ensure exportfilename is a Path object
+            config["exportfilename"] = Path(config["exportfilename"])
         config["exportdirectory"] = Path(config["exportdirectory"])
 
         if self.args.get("show_sensitive"):
@@ -259,7 +262,13 @@ class Configuration:
         self._args_to_config(
             config,
             argname="enable_protections",
-            logstring="Parameter --enable-protections detected, enabling Protections. ...",
+            logstring="Parameter --enable-protections detected, enabling Protections ...",
+        )
+
+        self._args_to_config(
+            config,
+            argname="enable_dynamic_pairlist",
+            logstring="Parameter --enable-dynamic-pairlist detected, enabling dynamic pairlist ...",
         )
 
         if self.args.get("max_open_trades"):
@@ -327,7 +336,6 @@ class Configuration:
         # Hyperopt section
 
         configurations = [
-            ("hyperopt", "Using Hyperopt class name: {}"),
             ("hyperopt_path", "Using additional Hyperopt lookup path: {}"),
             ("hyperoptexportfilename", "Using hyperopt file: {}"),
             ("lookahead_analysis_exportfilename", "Saving lookahead analysis results into {} ..."),

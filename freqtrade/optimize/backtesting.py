@@ -211,6 +211,7 @@ class Backtesting:
         self._can_short = self.trading_mode != TradingMode.SPOT
         self._position_stacking: bool = self.config.get("position_stacking", False)
         self.enable_protections: bool = self.config.get("enable_protections", False)
+        self.dynamic_pairlist: bool = self.config.get("enable_dynamic_pairlist", False)
         migrate_data(config, self.exchange)
 
         self.init_backtest()
@@ -272,7 +273,7 @@ class Backtesting:
         self.futures_data: dict[str, DataFrame] = {}
 
     def init_backtest(self):
-        self.prepare_backtest(False)
+        self.reset_backtest(False)
 
         self.wallets = Wallets(self.config, self.exchange, is_backtest=True)
 
@@ -426,7 +427,7 @@ class Backtesting:
     def disable_database_use(self):
         disable_database_use(self.timeframe)
 
-    def prepare_backtest(self, enable_protections):
+    def reset_backtest(self, enable_protections: bool = False):
         """
         Backtesting setup method - called once for every call to "backtest()".
         """
@@ -1584,6 +1585,11 @@ class Backtesting:
         for current_time in self._time_generator(start_date, end_date):
             # Loop for each main candle.
             self.check_abort()
+
+            if self.dynamic_pairlist and self.pairlists:
+                self.pairlists.refresh_pairlist()
+                pairs = self.pairlists.whitelist
+
             # Reset open trade count for this candle
             # Critical to avoid exceeding max_open_trades in backtesting
             # when timeframe-detail is used and trades close within the opening candle.
@@ -1686,7 +1692,7 @@ class Backtesting:
         :param end_date: backtesting timerange end datetime
         :return: DataFrame with trades (results of backtesting)
         """
-        self.prepare_backtest(self.enable_protections)
+        self.reset_backtest(self.enable_protections)
         # Ensure wallets are up-to-date (important for --strategy-list)
         self.wallets.update()
         # Use dict of lists with data for performance

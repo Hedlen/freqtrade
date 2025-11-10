@@ -360,11 +360,9 @@ class Telegram(RPCHandler):
                 await asyncio.sleep(2)
         if self._app.updater:
             await self._app.updater.start_polling(
-                bootstrap_retries=-1,
+                bootstrap_retries=10,
                 timeout=20,
-                # read_latency=60,  # Assumed transmission latency
                 drop_pending_updates=True,
-                # stop_signals=[],  # Necessary as we don't run on the main thread
             )
             while True:
                 await asyncio.sleep(10)
@@ -1457,7 +1455,11 @@ class Telegram(RPCHandler):
                     await query.answer()
                     await query.edit_message_text(text="Force exit canceled.")
                     return
-                trade: Trade | None = Trade.get_trades(trade_filter=Trade.id == trade_id).first()
+                trade: Trade | None = (
+                    Trade.get_trades(trade_filter=Trade.id == int(trade_id)).first()
+                    if trade_id.isdigit()
+                    else None
+                )
                 await query.answer()
                 if trade:
                     await query.edit_message_text(
