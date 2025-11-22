@@ -148,7 +148,13 @@ class IResolver:
                 logger.debug("Ignoring broken symlink %s", entry)
                 continue
             module_path = entry.resolve()
-            if entry.read_text().find(f"class {object_name}(") == -1:
+            # Read file content using UTF-8 with error tolerance to avoid locale-dependent decoding issues
+            try:
+                content = entry.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                # Fallback without encoding just in case, but continue gracefully
+                content = entry.read_text(errors="ignore")
+            if content.find(f"class {object_name}(") == -1:
                 logger.debug(f"Skipping {module_path} as it does not contain class {object_name}.")
                 continue
 
